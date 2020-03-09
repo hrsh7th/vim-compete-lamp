@@ -29,19 +29,11 @@ function! s:source() abort
   \   compete#source#register({
   \     'name': l:server.name,
   \     'complete': function('s:complete', [l:server]),
-  \     'query': function('s:query'),
   \     'filetypes': l:server.filetypes,
   \     'priority': 1,
   \     'trigger_chars': l:server.capability.get_completion_trigger_characters()
   \   })
   \ })
-endfunction
-
-"
-" query
-"
-function! s:query(input) abort
-  return '^.*\V' . join(split(a:input, '\zs'), '\m.*\V')
 endfunction
 
 "
