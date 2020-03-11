@@ -27,11 +27,11 @@ function! s:source() abort
   let l:servers = filter(l:servers, { _, server -> server.supports('capabilities.completionProvider') })
   let l:source_ids = map(copy(l:servers), { _, server ->
   \   compete#source#register({
-  \     'name': l:server.name,
-  \     'complete': function('s:complete', [l:server]),
-  \     'filetypes': l:server.filetypes,
-  \     'priority': 1,
-  \     'trigger_chars': l:server.capability.get_completion_trigger_characters()
+  \     'name': server.name,
+  \     'complete': function('s:complete', [server]),
+  \     'filetypes': server.filetypes,
+  \     'priority': 5,
+  \     'trigger_chars': server.capability.get_completion_trigger_characters()
   \   })
   \ })
 endfunction
@@ -63,7 +63,7 @@ function! s:on_response(server, context, callback, position, response) abort
 
   call a:callback({
   \   'items': lamp#feature#completion#convert(a:server.name, a:position, a:response),
-  \   'incomplete': get(a:response, 'isIncomplete', v:false),
+  \   'incomplete': type(a:response) == type({}) ? get(a:response, 'isIncomplete', v:false) : v:false,
   \ })
 endfunction
 
