@@ -62,7 +62,9 @@ function! s:on_response(server, context, callback, position, response) abort
   endif
 
   call a:callback({
-  \   'items': lamp#feature#completion#convert(a:server.name, a:position, a:response),
+  \   'items': lamp#feature#completion#convert(a:server.name, a:position, a:response, {
+  \     'menu': '[l]'
+  \   }),
   \   'incomplete': type(a:response) == type({}) ? get(a:response, 'isIncomplete', v:false) : v:false,
   \ })
 endfunction
