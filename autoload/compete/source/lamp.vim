@@ -40,31 +40,44 @@ endfunction
 " complete
 "
 function! s:complete(server, context, callback) abort
-  let l:position = s:Position.cursor()
+  let l:compete_position = s:Position.cursor()
   let l:promise = a:server.request('textDocument/completion', {
   \   'textDocument': lamp#protocol#document#identifier(bufnr('%')),
-  \   'position': l:position,
+  \   'position': l:compete_position,
   \   'context': {
   \     'triggerKind': 2,
   \     'triggerCharacter': a:context.before_char,
   \   }
   \ })
   let l:promise = l:promise.catch(lamp#rescue({}))
-  let l:promise = l:promise.then({ response -> s:on_response(a:server, a:context, a:callback, l:position, response) })
+  let l:promise = l:promise.then({ response ->
+  \   s:on_response(
+  \     a:server,
+  \     a:context,
+  \     a:callback,
+  \     l:compete_position,
+  \     response
+  \   )
+  \ })
 endfunction
 
 "
 " on_response
 "
-function! s:on_response(server, context, callback, position, response) abort
+function! s:on_response(server, context, callback, complete_position, response) abort
   if index([type([]), type({})], type(a:response)) == -1
     return
   endif
 
   call a:callback({
-  \   'items': lamp#feature#completion#convert(a:server.name, a:position, a:response, {
-  \     'menu': '[l]'
-  \   }),
+  \   'items': lamp#feature#completion#convert(
+  \     a:server.name,
+  \     a:complete_position,
+  \     a:response,
+  \     {
+  \       'menu': '[l]'
+  \     }
+  \   ),
   \   'incomplete': type(a:response) == type({}) ? get(a:response, 'isIncomplete', v:false) : v:false,
   \ })
 endfunction
