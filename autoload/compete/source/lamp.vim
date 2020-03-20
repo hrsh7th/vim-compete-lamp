@@ -75,7 +75,8 @@ function! s:on_response(server, context, callback, complete_position, response) 
   \     a:complete_position,
   \     a:response,
   \     {
-  \       'menu': '[l]'
+  \       'menu': '[l]',
+  \       'dup': 1,
   \     }
   \   ),
   \   'incomplete': type(a:response) == type({}) ? get(a:response, 'isIncomplete', v:false) : v:false,
