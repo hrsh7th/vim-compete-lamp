@@ -1,8 +1,8 @@
 let s:Position = vital#lamp#import('VS.LSP.Position')
 
 let s:state = {
-\   'timer_id': -1,
 \   'ids': [],
+\   'cancellation_token': lamp#cancellation_token(),
 \ }
 
 "
@@ -43,6 +43,9 @@ endfunction
 " complete
 "
 function! s:complete(server, context, callback) abort
+  call s:state.cancellation_token.cancel()
+  let s:state.cancellation_token = lamp#cancellation_token()
+
   let l:compete_position = s:Position.cursor()
   let l:promise = a:server.request('textDocument/completion', {
   \   'textDocument': lamp#protocol#document#identifier(bufnr('%')),
@@ -51,6 +54,8 @@ function! s:complete(server, context, callback) abort
   \     'triggerKind': 2,
   \     'triggerCharacter': a:context.before_char,
   \   }
+  \ }, {
+  \   'cancellation_token': s:state.cancellation_token,
   \ })
   let l:promise = l:promise.catch(lamp#rescue({}))
   let l:promise = l:promise.then({ response ->
