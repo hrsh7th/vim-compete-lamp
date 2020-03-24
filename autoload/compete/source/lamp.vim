@@ -33,7 +33,7 @@ function! s:source() abort
   \     'name': server.name,
   \     'complete': function('s:complete', [server]),
   \     'filetypes': server.filetypes,
-  \     'priority': 5,
+  \     'priority': 100,
   \     'trigger_chars': server.capability.get_completion_trigger_characters()
   \   })
   \ })
