@@ -43,6 +43,10 @@ endfunction
 " complete
 "
 function! s:complete(server, context, callback) abort
+  if empty(a:server)
+    return
+  endif
+
   call s:state.cancellation_token.cancel()
   let s:state.cancellation_token = lamp#cancellation_token()
 
