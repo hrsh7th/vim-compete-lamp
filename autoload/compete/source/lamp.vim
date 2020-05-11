@@ -26,7 +26,6 @@ function! s:source() abort
   let s:state.ids = []
 
   let l:servers = lamp#server#registry#all()
-  let l:servers = filter(l:servers, { _, server -> !empty(server.initialized) })
   let l:servers = filter(l:servers, { _, server -> server.supports('capabilities.completionProvider') })
   let s:state.ids = map(copy(l:servers), { _, server ->
   \   compete#source#register({
