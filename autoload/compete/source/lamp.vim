@@ -45,14 +45,19 @@ function! s:complete(server, context, callback) abort
   call s:state.cancellation_token.cancel()
   let s:state.cancellation_token = lamp#cancellation_token()
 
+  let l:context = {
+  \   'triggerKind': a:context.trigger_char !=# '' ? 2 : (a:context.incomplete ? 3 : 1),
+  \ }
+  
+  if a:context.trigger_char !=# ''
+    let l:context.triggerCharacter = a:context.trigger_char
+  endif
+
   let l:compete_position = s:Position.cursor()
   let l:promise = a:server.request('textDocument/completion', {
   \   'textDocument': lamp#protocol#document#identifier(bufnr('%')),
   \   'position': l:compete_position,
-  \   'context': {
-  \     'triggerKind': 2,
-  \     'triggerCharacter': a:context.before_char,
-  \   }
+  \   'context': l:context,
   \ }, {
   \   'cancellation_token': s:state.cancellation_token,
   \ })
